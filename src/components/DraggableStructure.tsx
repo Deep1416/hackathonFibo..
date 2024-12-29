@@ -1,52 +1,67 @@
-import { Dispatch, FC, SetStateAction, useRef, useState } from "react"
-import { Heading } from "../utils/parseDocument"
-import { Box, Grid2, Typography } from "@mui/material"
-import { useDrop } from "react-dnd"
-import { SortableAccordion } from "./SortableAccordion"
-
+import { Dispatch, FC, SetStateAction, useRef, useState } from "react";
+import { Heading } from "../utils/parseDocument";
+import { Box, Typography } from "@mui/material";
+import { useDrop } from "react-dnd";
+import { SortableAccordion } from "./SortableAccordion";
 
 export interface DraggableHeading extends Heading {
-  parent?: string | null // To keep track of the parent heading for nested structures
+  parent?: string | null; // To keep track of the parent heading for nested structures
 }
-
 
 export const DraggableStructure: FC<{ structure: Heading[] }> = ({
   structure,
 }) => {
-  const [restructured, setRestructured] = useState<Heading[]>([])
-  const [expandedOg, setExpandedOg] = useState<string[]>([])
-  const [expandedRestructured, setExpandedRestructured] = useState<string[]>([])
-
+  const [restructured, setRestructured] = useState<Heading[]>([]);
+  const [expandedOg, setExpandedOg] = useState<string[]>([]);
+  const [expandedRestructured, setExpandedRestructured] = useState<string[]>(
+    []
+  );
 
   return (
     <div className="">
-      <div className="flex justify-between " >
-      
+      <div className="flex justify-between ">
         <div className="">
-          <Typography variant="h4" sx={{ textAlign: "center", fontWeight: "bold", paddingTop:"12px" }}>
+          <Typography
+            variant="h4"
+            sx={{ textAlign: "center", fontWeight: "bold", paddingTop: "12px" }}
+          >
             Table of contents
           </Typography>
           <div className="pt-5">
-          {structure?.map((heading, index) => (
-            <SortableAccordion
-              key={index}
-              heading={heading}
-              expanded={expandedOg}
-              isDraggable
-              setExpanded={setExpandedOg}
-              setAllHeadings={setRestructured}
-              isDroppable={false}
-            />
-          ))}
+            {structure?.map((heading, index) => (
+              <SortableAccordion
+                key={index}
+                heading={heading}
+                expanded={expandedOg}
+                isDraggable
+                setExpanded={setExpandedOg}
+                setAllHeadings={setRestructured}
+                isDroppable={false}
+              />
+            ))}
           </div>
         </div>
-        <div className="w-[65%] "  >
-          <Typography variant="h5" sx={{ textAlign: "center", fontStyle: "italic", paddingBottom:"16px" , paddingTop:"4px" }}>
+        <div className="w-[65%] ">
+          <Typography
+            variant="h5"
+            sx={{
+              textAlign: "center",
+              fontStyle: "italic",
+              paddingBottom: "16px",
+              paddingTop: "4px",
+            }}
+          >
             Drag and drop headings here
           </Typography>
 
-
-          <Box sx={{ border: "2px dashed #ccc", padding: "16px", borderRadius: "8px" , paddingTop:"16px" }}>
+          <Box
+            sx={{
+              border: "2px dashed #ccc",
+              padding: "16px",
+              borderRadius: "8px",
+              paddingTop: "16px",
+            }}
+          >
             {restructured.map((heading, index) => (
               <>
                 <SortableAccordion
@@ -68,7 +83,6 @@ export const DraggableStructure: FC<{ structure: Heading[] }> = ({
               </>
             ))}
 
-
             {restructured.length === 0 ? (
               <DroppableContainer setAllHeadings={setRestructured} showInfo />
             ) : null}
@@ -76,16 +90,15 @@ export const DraggableStructure: FC<{ structure: Heading[] }> = ({
         </div>
       </div>
     </div>
-  )
-}
-
+  );
+};
 
 const DroppableContainer: FC<{
-  setAllHeadings: Dispatch<SetStateAction<DraggableHeading[]>>
-  showInfo: boolean
-  allHeadings?: DraggableHeading[]
-  short?: boolean
-  dropIndex?: number
+  setAllHeadings: Dispatch<SetStateAction<DraggableHeading[]>>;
+  showInfo: boolean;
+  allHeadings?: DraggableHeading[];
+  short?: boolean;
+  dropIndex?: number;
 }> = ({ setAllHeadings, showInfo, allHeadings, short, dropIndex }) => {
   const [{ isOver }, drop] = useDrop({
     accept: "HEADING",
@@ -95,38 +108,33 @@ const DroppableContainer: FC<{
           showInfo ||
           !allHeadings?.find((h) => h.randomKey === draggedItem.randomKey)
         ) {
-          const newHeadings = [...prev, draggedItem]
-          return newHeadings
+          const newHeadings = [...prev, draggedItem];
+          return newHeadings;
         } else {
-          const newHeadings = [...prev]
+          const newHeadings = [...prev];
           const draggedIndex = newHeadings.findIndex(
             (h) => h.randomKey === draggedItem.randomKey
-          )
+          );
 
-
-          newHeadings.splice(draggedIndex, 1)
+          newHeadings.splice(draggedIndex, 1);
           if (dropIndex !== undefined) {
-            newHeadings.splice(dropIndex, 0, draggedItem)
+            newHeadings.splice(dropIndex, 0, draggedItem);
           } else {
-            newHeadings.push(draggedItem)
+            newHeadings.push(draggedItem);
           }
 
-
-          return newHeadings
+          return newHeadings;
         }
-      })
+      });
     },
     collect: (monitor) => ({
       isOver: monitor.isOver(),
     }),
-  })
+  });
 
+  const dropRef = useRef(null);
 
-  const dropRef = useRef(null)
-
-
-  drop(dropRef)
-
+  drop(dropRef);
 
   return (
     <Box
@@ -149,5 +157,5 @@ const DroppableContainer: FC<{
         </Typography>
       )}
     </Box>
-  )
-}
+  );
+};

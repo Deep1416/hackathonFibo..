@@ -7,6 +7,7 @@ import { DraggableStructure } from "../components/DraggableStructure";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import Image from "next/image";
 
 export default function Home() {
   const [fileContent, setFileContent] = useState<Heading[]>([]);
@@ -53,9 +54,11 @@ export default function Home() {
           </h1>
 
           <div className="flex items-center justify-center">
-            <img
+            <Image
               src="https://images.gtag.xyz/images/sections/upload.svg"
               alt=""
+              width={300}
+              height={300}
             />
           </div>
         </>
