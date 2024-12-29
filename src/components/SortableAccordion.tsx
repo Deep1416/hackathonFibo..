@@ -1,17 +1,17 @@
-import { Accordion, AccordionSummary, AccordionDetails } from "@mui/material"
-import { FC, Dispatch, SetStateAction, useRef } from "react"
-import { useDrag, useDrop } from "react-dnd"
-import { DraggableHeading } from "./DraggableStructure"
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
+import { Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
+import { FC, Dispatch, SetStateAction, useRef } from "react";
+import { useDrag, useDrop } from "react-dnd";
+import { DraggableHeading } from "./DraggableStructure";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 export const SortableAccordion: FC<{
-  heading: DraggableHeading
-  isDroppable: boolean
-  isDraggable: boolean
-  expanded: string[]
-  setExpanded: Dispatch<SetStateAction<string[]>>
+  heading: DraggableHeading;
+  isDroppable: boolean;
+  isDraggable: boolean;
+  expanded: string[];
+  setExpanded: Dispatch<SetStateAction<string[]>>;
 
-  setAllHeadings: Dispatch<SetStateAction<DraggableHeading[]>>
+  setAllHeadings: Dispatch<SetStateAction<DraggableHeading[]>>;
 }> = ({
   heading,
   isDroppable,
@@ -27,48 +27,48 @@ export const SortableAccordion: FC<{
       isDragging: monitor.isDragging(),
     }),
     canDrag: () => isDraggable, // Only draggable if allowed
-  })
+  });
 
   const [{ isOver }, drop] = useDrop({
     accept: "HEADING",
     drop: (draggedItem: DraggableHeading) => {
       setAllHeadings((prev) => {
-        const newHeadings = [...prev]
+        const newHeadings = [...prev];
         const draggedIndex = newHeadings.findIndex(
           (h) => h.randomKey === draggedItem.randomKey
-        )
+        );
 
-        newHeadings.splice(draggedIndex, 1)
+        newHeadings.splice(draggedIndex, 1);
         const dropIndex = newHeadings.findIndex(
           (h) => h.randomKey === heading.randomKey
-        )
-        newHeadings.splice(dropIndex, 0, draggedItem)
-        return newHeadings
-      })
+        );
+        newHeadings.splice(dropIndex, 0, draggedItem);
+        return newHeadings;
+      });
     },
     collect: (monitor) => ({
       isOver: monitor.isOver(),
     }),
     canDrop: () => isDroppable, // Only droppable if allowed
-  })
+  });
 
-  const dragRef = useRef(null)
-  const dropRef = useRef(null)
+  const dragRef = useRef(null);
+  const dropRef = useRef(null);
 
-  if (isDraggable) drag(dragRef)
-  if (isDroppable) drop(dropRef)
+  if (isDraggable) drag(dragRef);
+  if (isDroppable) drop(dropRef);
 
   const handleAccordionChange =
     (randomKey: string) =>
     (event: React.SyntheticEvent, isExpanded: boolean) => {
       setExpanded((prev) => {
         if (isExpanded) {
-          return [...prev, randomKey]
+          return [...prev, randomKey];
         } else {
-          return prev.filter((t) => t !== randomKey)
+          return prev.filter((t) => t !== randomKey);
         }
-      })
-    }
+      });
+    };
 
   return (
     <Accordion
@@ -104,5 +104,5 @@ export const SortableAccordion: FC<{
         ))}
       </AccordionDetails>
     </Accordion>
-  )
-}
+  );
+};

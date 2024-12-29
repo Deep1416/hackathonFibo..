@@ -11,10 +11,10 @@ import Image from "next/image";
 
 export default function Home() {
   const [fileContent, setFileContent] = useState<Heading[]>([]);
-  console.log(fileContent);
+  const [loading, setLoading] = useState(false);
 
   return (
-    <div className="container mx-auto mt-16 flex flex-col gap-4">
+    <div className="container mx-auto mt-16 flex flex-col gap-4 px-4 sm:px-8 lg:px-16">
       <Button
         component="label"
         role={undefined}
@@ -22,10 +22,10 @@ export default function Home() {
         tabIndex={-1}
         startIcon={<CloudUploadIcon />}
         sx={{
-          backgroundColor: "primary.dark", // Customize background color
-          color: "white", // Customize text color
+          backgroundColor: "primary.dark",
+          color: "white",
           "&:hover": {
-            backgroundColor: "lightGreen", // Customize hover color
+            backgroundColor: "lightGreen",
           },
         }}
       >
@@ -36,10 +36,21 @@ export default function Home() {
           onChange={(e) => {
             const file = e.target.files?.[0];
             if (file) {
+              if (file.type !== "text/plain") {
+                alert("Please upload a plain text file.");
+                return;
+              }
+              setLoading(true);
               const reader = new FileReader();
               reader.onload = (e) => {
-                const content = e.target?.result as string;
-                setFileContent(parseDocument(content)); // Update state with parsed content
+                try {
+                  const content = e.target?.result as string;
+                  setFileContent(parseDocument(content));
+                } catch (error) {
+                  alert("Failed to parse the file: " + error);
+                } finally {
+                  setLoading(false);
+                }
               };
               reader.readAsText(file);
             }
@@ -47,16 +58,17 @@ export default function Home() {
         />
       </Button>
 
-      {fileContent.length == 0 ? (
+      {loading && <p className="text-center text-lg">Processing file...</p>}
+
+      {fileContent.length === 0 && !loading ? (
         <>
           <h1 className="text-center text-2xl font-semibold">
             Upload a Text File to Get Started
           </h1>
-
           <div className="flex items-center justify-center">
             <Image
               src="https://images.gtag.xyz/images/sections/upload.svg"
-              alt=""
+              alt="Upload illustration"
               width={300}
               height={300}
             />
